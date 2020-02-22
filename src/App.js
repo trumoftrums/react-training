@@ -11,6 +11,14 @@ import uuidv4 from 'uuid/v4';
 import logo from './logo.svg';
 import './App.css';
 import './../node_modules/sweetalert/dist/sweetalert.css';
+import Nav from "./components/Nav";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
+import RouterUrl from "./components/RouterUrl";
 
 class App extends Component {
     constructor(props) {
@@ -28,7 +36,7 @@ class App extends Component {
             arrayLevel: [0, 1, 2],
             newValue: '',
             newLevelValue: 0,
-            searchString:''
+            searchString: ''
         }
     }
 
@@ -163,13 +171,13 @@ class App extends Component {
         })
     };
 
-    handleOnChangeInputSearch = (value)=>{
+    handleOnChangeInputSearch = (value) => {
         console.log(value);
         let sourceData = Items;
         let newItems = [];
-        if(value.length <= 0){
+        if (value.length <= 0) {
             newItems = sourceData;
-        }else{
+        } else {
             value.toLowerCase().trim();
             if (sourceData.length > 0) {
                 for (let i = 0; i < sourceData.length; i++) {
@@ -180,75 +188,80 @@ class App extends Component {
             }
         }
         this.setState({
-            searchString:value,
-            items:newItems
+            searchString: value,
+            items: newItems
         })
     };
 
 
     render() {
         return (
-            <div className="container">
-                <SweetAlert
-                    show={this.state.showAlert}
-                    title="Demo"
-                    text={this.state.titleAlert}
-                    showCancelButton
-                    onOutsideClick={() => this.setState({showAlert: false})}
-                    onEscapeKey={() => this.setState({showAlert: false})}
-                    onCancel={() => this.setState({showAlert: false})}
-                    onConfirm={() => this.handleDeleteItem()}
-                />
-                <Title/>
-                <div className="row">
-                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                        <Search
-                            searchString={this.state.searchString}
-                            handleOnChangeInputSearch={this.handleOnChangeInputSearch}
+            <Router>
+                <div className="main">
+                    <Nav/>
+                    <div className="container">
+                        <SweetAlert
+                            show={this.state.showAlert}
+                            title="Demo"
+                            text={this.state.titleAlert}
+                            showCancelButton
+                            onOutsideClick={() => this.setState({showAlert: false})}
+                            onEscapeKey={() => this.setState({showAlert: false})}
+                            onCancel={() => this.setState({showAlert: false})}
+                            onConfirm={() => this.handleDeleteItem()}
                         />
-                    </div>
-                    <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                        <Sort/>
-                    </div>
-                    <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                        <button
-                            type="button"
-                            className="btn btn-info btn-block marginB10"
-                            onClick={this.handleShowFormAddNew}
-                        >{(this.state.showFormAdd) ? 'Close item' : 'Add Item'}</button>
+                        {/*<div className="row">
+                         <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                         <Search
+                         searchString={this.state.searchString}
+                         handleOnChangeInputSearch={this.handleOnChangeInputSearch}
+                         />
+                         </div>
+                         <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                         <Sort/>
+                         </div>
+                         <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                         <button
+                         type="button"
+                         className="btn btn-info btn-block marginB10"
+                         onClick={this.handleShowFormAddNew}
+                         >{(this.state.showFormAdd) ? 'Close item' : 'Add Item'}</button>
+                         </div>
+                         </div>
+                         <div className="row marginB10">
+                         <div className="col-md-offset-7 col-md-5">
+                         <Form
+                         showFormAdd={this.state.showFormAdd}
+                         handleShowFormAddNew={this.handleShowFormAddNew}
+                         arrayLevel={this.state.arrayLevel}
+                         handleChangeInputNewValue={this.handleChangeInputNewValue}
+                         newValue={this.state.newValue}
+                         newLevelValue={this.state.newLevelValue}
+                         handleChangeSelectFormAdd={this.handleChangeSelectFormAdd}
+                         handleSubmitFormAdd={this.handleSubmitFormAdd}
+                         />
+                         </div>
+                         </div>
+                         <div className="panel panel-success">
+                         <div className="panel-heading">List Item</div>
+                         <table className="table table-hover">
+                         <thead>
+                         <tr>
+                         <th style={{width: '10%'}} className="text-center">#</th>
+                         <th>Name</th>
+                         <th style={{width: '15%'}} className="text-center">Level</th>
+                         <th style={{width: '15%'}}>Action</th>
+                         </tr>
+                         </thead>
+                         <tbody>
+                         {this.renderItem()}
+                         </tbody>
+                         </table>
+                         </div>*/}
+                        <RouterUrl/>
                     </div>
                 </div>
-                <div className="row marginB10">
-                    <div className="col-md-offset-7 col-md-5">
-                        <Form
-                            showFormAdd={this.state.showFormAdd}
-                            handleShowFormAddNew={this.handleShowFormAddNew}
-                            arrayLevel={this.state.arrayLevel}
-                            handleChangeInputNewValue={this.handleChangeInputNewValue}
-                            newValue={this.state.newValue}
-                            newLevelValue={this.state.newLevelValue}
-                            handleChangeSelectFormAdd={this.handleChangeSelectFormAdd}
-                            handleSubmitFormAdd={this.handleSubmitFormAdd}
-                        />
-                    </div>
-                </div>
-                <div className="panel panel-success">
-                    <div className="panel-heading">List Item</div>
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th style={{width: '10%'}} className="text-center">#</th>
-                            <th>Name</th>
-                            <th style={{width: '15%'}} className="text-center">Level</th>
-                            <th style={{width: '15%'}}>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.renderItem()}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            </Router>
         );
     }
 }
