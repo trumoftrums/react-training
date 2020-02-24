@@ -1,26 +1,15 @@
 import React, {Component} from 'react';
-import Title from './components/Title';
-import Search from './components/Search';
-import Sort from './components/Sort';
-import Form from './components/Form';
-import Items from './mockdata/Items';
-import Item from './components/Item';
-import ItemEdit from './components/ItemEdit';
-import SweetAlert from 'sweetalert-react';
+import Search from './child-components/Search';
+import Sort from './child-components/Sort';
+import Form from './child-components/Form';
+import Items from '../../mockdata/Items';
+import Item from './child-components/Item';
+import ItemEdit from './child-components/ItemEdit';
 import uuidv4 from 'uuid/v4';
-import logo from './logo.svg';
-import './App.css';
-import './../node_modules/sweetalert/dist/sweetalert.css';
-import Nav from "./components/Nav";
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
-import RouterUrl from "./components/RouterUrl";
+import SweetAlert from "sweetalert-react";
+import '../../../node_modules/sweetalert/dist/sweetalert.css';
 
-class App extends Component {
+class TodoList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -196,74 +185,68 @@ class App extends Component {
 
     render() {
         return (
-            <Router>
-                <div className="main">
-                    <Nav/>
-                    <div className="container">
-                        <SweetAlert
-                            show={this.state.showAlert}
-                            title="Demo"
-                            text={this.state.titleAlert}
-                            showCancelButton
-                            onOutsideClick={() => this.setState({showAlert: false})}
-                            onEscapeKey={() => this.setState({showAlert: false})}
-                            onCancel={() => this.setState({showAlert: false})}
-                            onConfirm={() => this.handleDeleteItem()}
+            <div className="todoList">
+                <SweetAlert
+                    show={this.state.showAlert}
+                    title="Demo"
+                    text={this.state.titleAlert}
+                    showCancelButton
+                    onOutsideClick={() => this.setState({showAlert: false})}
+                    onEscapeKey={() => this.setState({showAlert: false})}
+                    onCancel={() => this.setState({showAlert: false})}
+                    onConfirm={() => this.handleDeleteItem()}
+                />
+                <div className="row">
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <Search
+                            searchString={this.state.searchString}
+                            handleOnChangeInputSearch={this.handleOnChangeInputSearch}
                         />
-                        {/*<div className="row">
-                         <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                         <Search
-                         searchString={this.state.searchString}
-                         handleOnChangeInputSearch={this.handleOnChangeInputSearch}
-                         />
-                         </div>
-                         <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                         <Sort/>
-                         </div>
-                         <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                         <button
-                         type="button"
-                         className="btn btn-info btn-block marginB10"
-                         onClick={this.handleShowFormAddNew}
-                         >{(this.state.showFormAdd) ? 'Close item' : 'Add Item'}</button>
-                         </div>
-                         </div>
-                         <div className="row marginB10">
-                         <div className="col-md-offset-7 col-md-5">
-                         <Form
-                         showFormAdd={this.state.showFormAdd}
-                         handleShowFormAddNew={this.handleShowFormAddNew}
-                         arrayLevel={this.state.arrayLevel}
-                         handleChangeInputNewValue={this.handleChangeInputNewValue}
-                         newValue={this.state.newValue}
-                         newLevelValue={this.state.newLevelValue}
-                         handleChangeSelectFormAdd={this.handleChangeSelectFormAdd}
-                         handleSubmitFormAdd={this.handleSubmitFormAdd}
-                         />
-                         </div>
-                         </div>
-                         <div className="panel panel-success">
-                         <div className="panel-heading">List Item</div>
-                         <table className="table table-hover">
-                         <thead>
-                         <tr>
-                         <th style={{width: '10%'}} className="text-center">#</th>
-                         <th>Name</th>
-                         <th style={{width: '15%'}} className="text-center">Level</th>
-                         <th style={{width: '15%'}}>Action</th>
-                         </tr>
-                         </thead>
-                         <tbody>
-                         {this.renderItem()}
-                         </tbody>
-                         </table>
-                         </div>*/}
-                        <RouterUrl/>
+                    </div>
+                    <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                        <Sort/>
+                    </div>
+                    <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                        <button
+                            type="button"
+                            className="btn btn-info btn-block marginB10"
+                            onClick={this.handleShowFormAddNew}
+                        >{(this.state.showFormAdd) ? 'Close item' : 'Add Item'}</button>
                     </div>
                 </div>
-            </Router>
+                <div className="row marginB10">
+                    <div className="col-md-offset-7 col-md-5">
+                        <Form
+                            showFormAdd={this.state.showFormAdd}
+                            handleShowFormAddNew={this.handleShowFormAddNew}
+                            arrayLevel={this.state.arrayLevel}
+                            handleChangeInputNewValue={this.handleChangeInputNewValue}
+                            newValue={this.state.newValue}
+                            newLevelValue={this.state.newLevelValue}
+                            handleChangeSelectFormAdd={this.handleChangeSelectFormAdd}
+                            handleSubmitFormAdd={this.handleSubmitFormAdd}
+                        />
+                    </div>
+                </div>
+                <div className="panel panel-success">
+                    <div className="panel-heading">List Item</div>
+                    <table className="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style={{width: '10%'}} className="text-center">#</th>
+                            <th>Name</th>
+                            <th style={{width: '15%'}} className="text-center">Level</th>
+                            <th style={{width: '15%'}}>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {this.renderItem()}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         );
     }
 }
 
-export default App;
+export default TodoList;

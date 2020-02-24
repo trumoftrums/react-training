@@ -2,16 +2,11 @@
  * Created by Bao Nghiem on 2/22/2020.
  */
 import React, {Component} from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
+import {Switch, Route} from "react-router-dom";
 import About from "./About";
 import ContactUs from "./ContactUs";
 import Home from "./Home";
-import TodoList from "./TodoList";
+import TodoList from "./todolist/list";
 
 class RouterUrl extends Component {
     render() {
