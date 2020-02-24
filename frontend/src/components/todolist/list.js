@@ -2,18 +2,18 @@ import React, {Component} from 'react';
 import Search from './child-components/Search';
 import Sort from './child-components/Sort';
 import Form from './child-components/Form';
-import Items from '../../mockdata/Items';
 import Item from './child-components/Item';
 import ItemEdit from './child-components/ItemEdit';
 import uuidv4 from 'uuid/v4';
 import SweetAlert from "sweetalert-react";
 import '../../../node_modules/sweetalert/dist/sweetalert.css';
+import TodoListModel from './model';
 
 class TodoList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            items: Items,
+            items: [],
             showAlert: false,
             titleAlert: '',
             idAlert: '',
@@ -27,6 +27,19 @@ class TodoList extends Component {
             newLevelValue: 0,
             searchString: ''
         }
+    }
+
+    componentDidMount() {
+        this.getListUsers();
+    }
+
+    getListUsers() {
+        TodoListModel.getUsers().then(
+            results => {
+                this.setState({
+                    items: results.data
+                });
+            });
     }
 
     renderItem = () => {
@@ -162,7 +175,7 @@ class TodoList extends Component {
 
     handleOnChangeInputSearch = (value) => {
         console.log(value);
-        let sourceData = Items;
+        let sourceData = [];
         let newItems = [];
         if (value.length <= 0) {
             newItems = sourceData;
@@ -235,6 +248,7 @@ class TodoList extends Component {
                         <tr>
                             <th style={{width: '10%'}} className="text-center">#</th>
                             <th>Name</th>
+                            <th>Email</th>
                             <th style={{width: '15%'}} className="text-center">Level</th>
                             <th style={{width: '15%'}}>Action</th>
                         </tr>

@@ -36,6 +36,9 @@ class Item extends Component {
                 <td>
                     {item.name}
                 </td>
+                <td>
+                    {item.email}
+                </td>
                 <td className="text-center">
                     <span className={classNameLabel}>{nameLabel}</span>
                 </td>
