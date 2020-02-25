@@ -22,9 +22,8 @@ class TodoList extends Component {
             nameEdit: '',
             levelEdit: 0,
             showFormAdd: false,
-            arrayLevel: [0, 1, 2],
-            newValue: '',
-            newLevelValue: 0,
+            newValueName: '',
+            newValueEmail: '',
             searchString: ''
         }
     }
@@ -43,7 +42,7 @@ class TodoList extends Component {
     }
 
     renderItem = () => {
-        let {items, idEdit, indexEdit, nameEdit, levelEdit, arrayLevel} = this.state;
+        let {items, idEdit, indexEdit, nameEdit, emailEdit} = this.state;
         if (items.length === 0) {
             return <Item item={0}/>
         }
@@ -53,12 +52,11 @@ class TodoList extends Component {
                     key={index}
                     indexEdit={indexEdit}
                     nameEdit={nameEdit}
-                    levelEdit={levelEdit}
+                    emailEdit={emailEdit}
                     handleCancelEditClick={this.handleCancelEditClick}
                     handleEditNameInput={this.handleEditNameInput}
-                    handleEditSelect={this.handleEditSelect}
+                    handleEditEmail={this.handleEditEmail}
                     handleEditClickSubmit={this.handleEditClickSubmit}
-                    arrayLevel={arrayLevel}
                 />
             }
             return (
@@ -80,25 +78,23 @@ class TodoList extends Component {
         });
     };
     handleDeleteItem = () => {
-        let {idAlert, items} = this.state;
-        if (items.length > 0) {
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].id === idAlert) {
-                    items.splice(i, 1);
-                    break;
+        let {idAlert} = this.state;
+        TodoListModel.deleteUser(idAlert).then(
+            results => {
+                if (results.data.code === 200) {
+                    this.setState({
+                        showAlert: false
+                    });
+                    this.componentDidMount();
                 }
-            }
-        }
-        this.setState({
-            showAlert: false
-        });
+            });
     };
     handleEditItem = (index, item) => {
         this.setState({
             indexEdit: index,
             idEdit: item.id,
             nameEdit: item.name,
-            levelEdit: item.level
+            emailEdit: item.email
         });
     };
 
@@ -113,25 +109,25 @@ class TodoList extends Component {
             nameEdit: value
         })
     };
-    handleEditSelect = (value) => {
+    handleEditEmail = (value) => {
         this.setState({
-            levelEdit: value
+            emailEdit: value
         })
     };
     handleEditClickSubmit = () => {
-        let {items, idEdit, nameEdit, levelEdit} = this.state;
-        if (items.length > 0) {
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].id === idEdit) {
-                    items[i].name = nameEdit;
-                    items[i].level = parseInt(levelEdit);
-                    break;
+        let {idEdit, nameEdit, emailEdit} = this.state;
+        TodoListModel.updateUser(idEdit, {
+            'name': nameEdit,
+            'email': emailEdit
+        }).then(
+            result => {
+                if (result.data.code === 200) {
+                    this.componentDidMount();
+                    this.setState({
+                        idEdit: ''
+                    })
                 }
-            }
-        }
-        this.setState({
-            idEdit: ''
-        });
+            });
     };
 
     handleShowFormAddNew = () => {
@@ -140,59 +136,58 @@ class TodoList extends Component {
         })
     };
 
-    handleChangeInputNewValue = (value) => {
-        console.log(value);
+    handleChangeInputNewValueName = (value) => {
         this.setState({
-            newValue: value
+            newValueName: value
+        })
+    };
+    handleChangeInputNewValueEmail = (value) => {
+        this.setState({
+            newValueEmail: value
         })
     };
 
     handleChangeSelectFormAdd = (value) => {
-        console.log(value);
         this.setState({
             newLevelValue: value
         })
     };
 
     handleSubmitFormAdd = () => {
-        let {items, newValue, newLevelValue} = this.state;
-        console.log(newValue, newLevelValue);
-        if (newValue.trim() === '') {
+        let {newValueName, newValueEmail} = this.state;
+        console.log(newValueName, newValueEmail);
+        if (newValueEmail.trim() === '' || newValueName.trim() === '') {
             return false
         }
         let newItem = {
-            id: uuidv4(),
-            name: newValue,
-            level: parseInt(newLevelValue)
+            name: newValueName,
+            email: newValueEmail
         };
-        items.push(newItem);
-        this.setState({
-            items: items,
-            newItem: '',
-            newLevelValue: 0
-        })
+        TodoListModel.createUser(newItem).then(
+            results => {
+                if (results.data.code === 200) {
+                    this.componentDidMount();
+                    this.setState({
+                        newValueName: '',
+                        newValueEmail: ''
+                    });
+                }
+            });
     };
 
     handleOnChangeInputSearch = (value) => {
         console.log(value);
-        let sourceData = [];
-        let newItems = [];
-        if (value.length <= 0) {
-            newItems = sourceData;
-        } else {
+        if (value.length >= 0) {
             value.toLowerCase().trim();
-            if (sourceData.length > 0) {
-                for (let i = 0; i < sourceData.length; i++) {
-                    if (sourceData[i].name.toLowerCase().trim().indexOf(value) > -1) {
-                        newItems.push(sourceData[i])
-                    }
+            TodoListModel.getUsers(value).then(
+                results => {
+                    this.setState({
+                        searchString: value,
+                        items: results.data.users
+                    })
                 }
-            }
+            );
         }
-        this.setState({
-            searchString: value,
-            items: newItems
-        })
     };
 
 
@@ -232,10 +227,10 @@ class TodoList extends Component {
                         <Form
                             showFormAdd={this.state.showFormAdd}
                             handleShowFormAddNew={this.handleShowFormAddNew}
-                            arrayLevel={this.state.arrayLevel}
-                            handleChangeInputNewValue={this.handleChangeInputNewValue}
-                            newValue={this.state.newValue}
-                            newLevelValue={this.state.newLevelValue}
+                            handleChangeInputNewValueName={this.handleChangeInputNewValueName}
+                            handleChangeInputNewValueEmail={this.handleChangeInputNewValueEmail}
+                            newValueName={this.state.newValueName}
+                            newValueEmail={this.state.newValueEmail}
                             handleChangeSelectFormAdd={this.handleChangeSelectFormAdd}
                             handleSubmitFormAdd={this.handleSubmitFormAdd}
                         />
@@ -249,7 +244,6 @@ class TodoList extends Component {
                             <th style={{width: '10%'}} className="text-center">#</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th style={{width: '15%'}} className="text-center">Level</th>
                             <th style={{width: '15%'}}>Action</th>
                         </tr>
                         </thead>

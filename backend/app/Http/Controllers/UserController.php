@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -13,14 +14,37 @@ class UserController extends Controller
     }
     public function store(Request $request) {
         $data = $request->input();
-        User::create( [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ] );
-        return response()->json([
-            'message' => 'success'
-        ]);
+        $valid = Validator::make($data, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+        ])->setAttributeNames(
+            [
+                'name' => 'Họ Tên',
+                'email' => 'Email'
+            ]
+        );
+
+        if ($valid->passes()) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt('111111'),
+            ]);
+            return response()->json([
+                'code' => 200,
+                'message' => "Tạo User $user->name ($user->email) thành công",
+                'user' => $user->toArray()
+            ]);
+        } else {
+            $errors = $valid->errors();
+            $data = [];
+            !$errors->has('name') ?: $data['name'] = $errors->first('name');
+            !$errors->has('email') ?: $data['email'] = $errors->first('email');
+            return response()->json([
+                'code' => 400,
+                'errors' => $data
+            ]);
+        }
     }
     public function show($id) {
         echo 'show';
@@ -29,9 +53,56 @@ class UserController extends Controller
         echo 'edit';
     }
     public function update(Request $request, $id) {
-        echo 'update';
+        $data = $request->input();
+        $valid = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+        ])->setAttributeNames(
+            [
+                'name' => 'Họ Tên',
+                'email' => 'Email'
+            ]
+        );
+
+        if ($valid->passes()) {
+            $user = User::find($id);
+            if ($user != null) {
+                $user->name = $data['name'];
+                $user->email = $data['email'];
+                $user->save();
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Cập nhật User $user->name ($user->email) thành công",
+                    'user' => $user->toArray()
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'error' => 'Xảy ra lỗi trong lúc cập nhật'
+                ]);
+            }
+        } else {
+            $errors = $valid->errors();
+            $data = [];
+            !$errors->has('name') ?: $data['name'] = $errors->first('name');
+            !$errors->has('email') ?: $data['email'] = $errors->first('email');
+            return response()->json([
+                'code' => 400,
+                'errors' => $data
+            ]);
+        }
     }
     public function destroy($id) {
-        echo 'destroy';
+        if ($user = User::find($id)) {
+            $user->delete();
+            return response()->json([
+                'code' => 200,
+                'message' => "Đã xóa thành công User $user->name"
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'error' => 'Xảy ra lỗi trong lúc xóa'
+        ]);
     }
 }
