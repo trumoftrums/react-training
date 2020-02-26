@@ -8,8 +8,14 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function index() {
-        $listUser = User::all();
+    public function index(Request $request) {
+        $keySearch = $request->input('search');
+        $itemPerPage = $request->input('item_per_page', 2);
+        $listUser = User::orderBy('id', 'desc');
+        if($keySearch){
+            $listUser->where('name', 'like', '%'.$keySearch.'%');
+        }
+        $listUser = $listUser->paginate($itemPerPage);
         return response()->json($listUser);
     }
     public function store(Request $request) {

@@ -4,12 +4,14 @@ import Sort from './child-components/Sort';
 import Form from './child-components/Form';
 import Item from './child-components/Item';
 import ItemEdit from './child-components/ItemEdit';
-import uuidv4 from 'uuid/v4';
 import SweetAlert from "sweetalert-react";
 import '../../../node_modules/sweetalert/dist/sweetalert.css';
 import TodoListModel from './model';
+import Pagination from "./child-components/Pagination";
+import queryString from 'query-string';
 
 class TodoList extends Component {
+    typingTimer = null;
     constructor(props) {
         super(props);
         this.state = {
@@ -33,7 +35,9 @@ class TodoList extends Component {
     }
 
     getListUsers() {
-        TodoListModel.getUsers().then(
+        let params = queryString.parse(this.props.location.search);
+        console.log(params);
+        TodoListModel.getUsers(params.searchString,params.page).then(
             results => {
                 this.setState({
                     items: results.data
@@ -46,7 +50,7 @@ class TodoList extends Component {
         if (items.length === 0) {
             return <Item item={0}/>
         }
-        return items.map((item, index) => {
+        return items.data.map((item, index) => {
             if (item.id === idEdit) {
                 return <ItemEdit
                     key={index}
@@ -70,6 +74,7 @@ class TodoList extends Component {
             )
         });
     };
+
     handleShowAlert = (item) => {
         this.setState({
             showAlert: true,
@@ -177,20 +182,39 @@ class TodoList extends Component {
 
     handleOnChangeInputSearch = (value) => {
         console.log(value);
-        if (value.length >= 0) {
-            value.toLowerCase().trim();
-            TodoListModel.getUsers(value).then(
-                results => {
-                    this.setState({
-                        searchString: value,
-                        items: results.data.users
-                    })
-                }
-            );
+        this.setState({
+            searchString: value
+        })
+        if (this.typingTimer){
+            clearTimeout(this.typingTimer);
         }
+        this.typingTimer = setTimeout(() =>{
+            if (value.length >= 0) {
+                value.toLowerCase().trim();
+                TodoListModel.getUsers(value).then(
+                    results => {
+                        this.setState({
+                            searchString: value,
+                            items: results.data
+                        })
+                    }
+                );
+            }
+        }, 300)
+
     };
 
-
+// nhận next props xử ly cho chuyển trang
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        let params = nextProps.location;
+        console.log(params);
+        TodoListModel.getUsers(params.searchString,params.page).then(
+            results => {
+                this.setState({
+                    items: results.data
+                });
+            });
+    }
     render() {
         return (
             <div className="todoList">
@@ -252,6 +276,7 @@ class TodoList extends Component {
                         </tbody>
                     </table>
                 </div>
+                <Pagination data={this.state.items} path='list-todo' search={this.state.searchString}/>
             </div>
         );
     }

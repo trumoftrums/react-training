@@ -3,8 +3,11 @@ import config from '../../config';
 
 class TodoListModel {
 
-    static getUsers(key) {
-        let url = config.apiUrl + 'users?search=' + key;
+    static getUsers(key='',page=1) {
+        let url = config.apiUrl + 'users?page=' + page;
+        if(key){
+            url += '&search='+key;
+        }
         return axios.get(url);
     }
 

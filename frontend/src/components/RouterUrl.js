@@ -12,10 +12,10 @@ class RouterUrl extends Component {
     render() {
         return(
             <Switch>
-                <Route exact path="/"><Home /></Route>
-                <Route path="/list-todo"><TodoList /></Route>
-                <Route path="/about"><About /></Route>
-                <Route path="/contact-us"><ContactUs /></Route>
+                <Route exact path="/" component={Home}/>
+                <Route path="/list-todo" component={TodoList}/>
+                <Route path="/about" component={About}/>
+                <Route path="/contact-us" component={ContactUs}/>
             </Switch>
         )
     }

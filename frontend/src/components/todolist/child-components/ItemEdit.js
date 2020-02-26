@@ -24,12 +24,7 @@ class ItemEdit extends Component {
                     value={this.props.nameEdit}
                     onChange={(event) => this.props.handleEditNameInput(event.target.value)}
                 /></td>
-                <td><input
-                    type="text"
-                    className="form-control"
-                    value={this.props.emailEdit}
-                    onChange={(event) => this.props.handleEditEmail(event.target.value)}
-                /></td>
+                <td>{this.props.emailEdit}</td>
                 <td>
                     <button type="button" className="btn btn-default btn-sm" onClick={this.props.handleCancelEditClick}>Cancel</button>
                     <button type="button" className="btn btn-success btn-sm" onClick={this.props.handleEditClickSubmit}>Save</button>
