@@ -5,6 +5,7 @@ class TodoListModel {
 
     static getUsers(key='',page=1) {
         let url = config.apiUrl + 'users?page=' + page;
+        console.log(key);
         if(key){
             url += '&search='+key;
         }

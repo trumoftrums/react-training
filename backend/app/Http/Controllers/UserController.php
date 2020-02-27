@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index(Request $request) {
         $keySearch = $request->input('search');
-        $itemPerPage = $request->input('item_per_page', 2);
+        $itemPerPage = $request->input('item_per_page', 4);
         $listUser = User::orderBy('id', 'desc');
         if($keySearch){
             $listUser->where('name', 'like', '%'.$keySearch.'%');

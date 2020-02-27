@@ -206,14 +206,18 @@ class TodoList extends Component {
 
 // nhận next props xử ly cho chuyển trang
     UNSAFE_componentWillReceiveProps(nextProps) {
-        let params = nextProps.location;
-        console.log(params);
-        TodoListModel.getUsers(params.searchString,params.page).then(
-            results => {
-                this.setState({
-                    items: results.data
+        let param = queryString.parse(nextProps.location.search);
+        console.log(param);
+        if (this.props.location.search !== nextProps.location.search) {
+            console.log('text search=> ');
+            console.log(param.search);
+            TodoListModel.getUsers(param.search,param.page).then(
+                results => {
+                    this.setState({
+                        items: results.data
+                    });
                 });
-            });
+        }
     }
     render() {
         return (
